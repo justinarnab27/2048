@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter.constants import X
+
 #####################################################
 #The variables here should be imported from other files
 score = 0
