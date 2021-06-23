@@ -4,7 +4,6 @@ import game
 
 #####################################################
 #The variables here should be imported from other files
-highest_score = game.get_highest_score()
  
 
 ##########################################################################################################
@@ -38,7 +37,7 @@ window.resizable(False,False)
 frame_grid = tk.Frame(master=window) #frame for containing the main grid of the game
 frame_grid.grid(row=0,column=0) 
 
-frame_side = tk.Frame(master=window) #frame for containing side pan
+frame_side = tk.Frame(master=window,bg='white') #frame for containing side pan
 frame_side.grid(row=0,column=1,sticky='nsew')
 
 #board_var_list = []
@@ -62,14 +61,16 @@ for i in range(game.board_size):
 	board_var_list.append(row)
 
 score_var = tk.StringVar()
-score_var.set(f"Your Score:\n\n{game.current_score}")
+highest_score_var = tk.StringVar()
 
-label_your_score = tk.Label(master=frame_side,textvariable=score_var)  #Label showing the users current score
+label_your_score = tk.Label(master=frame_side,textvariable=score_var,bg='white',font = ('Arial',12,'bold'))  #Label showing the users current score
 label_your_score.pack(pady=10,padx=5)
 
-label_highest_score = tk.Label(master=frame_side,text=f"Highest Score:\n\n{highest_score}") #Label showing the users highest score
+label_highest_score = tk.Label(master=frame_side,textvariable=highest_score_var,bg='white',font = ('Arial',12,'bold')) #Label showing the users highest score
 label_highest_score.pack(padx=5)
 
+button_reset_score = tk.Button(master=frame_side,text="Reset Scores") #Button for creating a new game
+button_reset_score.pack(side=tk.BOTTOM,padx=5,pady=10)
 button_new_game = tk.Button(master=frame_side,text="New Game") #Button for creating a new game
 button_new_game.pack(side=tk.BOTTOM,padx=5,pady=10)
 
@@ -79,7 +80,8 @@ def arrow_press(event):
 		return
 	global score
 	#score = 30
-	score_var.set(f"Your Score:\n\n{game.current_score}")
+	score_var.set(f"Your Score:\n{game.current_score}")
+	highest_score_var.set(f"Highest Score:\n{game.highest_score}")
 	dict = {
 		"Up" : 0,
 		"Right" : 1,
@@ -93,11 +95,20 @@ def arrow_press(event):
 		messagebox.showinfo("Game Over","Game Over!")
 	#print(dict[event.keysym])
 
+def on_closing():
+	if messagebox.askokcancel("Quit", "Do you want to quit?"):
+		window.destroy()
+	game.end_game()
+	return
+
 window.bind("<Up>",arrow_press)
 window.bind("<Down>",arrow_press)
 window.bind("<Left>",arrow_press)
 window.bind("<Right>",arrow_press)
 
 game.init_game()
+score_var.set(f"Your Score:\n{game.current_score}")
+highest_score_var.set(f"Highest Score:\n{game.highest_score}")
 update_board()
+window.protocol("WM_DELETE_WINDOW",on_closing)
 window.mainloop()
