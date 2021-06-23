@@ -6,6 +6,8 @@ current_score = 0  #Current score of the user
 highest_score = 0  #Highest Score of the user
 game_over = False   #Variable to indicate whether gane is over
 has_moved = False    #Indicates if the board has changed due to a move
+valid_moves = range(4)  #List of valid moves
+c = 0
 
 def spawn_new_cell():
 	'''Spawns a new 2 in an empty cell
@@ -106,35 +108,47 @@ def save_highest_score(score):
 	file.write(str(score))
 	file.close()
 
-def play_game():
-	'''The main game loop'''
+def init_game():
+	'''Initializes the game'''
 	global game_over
 	game_over = False        #Sets the gameover variable to false
+	print(id(game_over))
 	global current_score    
 	current_score = 0   #Sets the current_score to 0
 	global highest_score
 	highest_score = get_highest_score()
-	valid_moves = range(4)  #List of valid moves
 	board[random.randrange(board_size)][random.randrange(board_size)] = 2   #randomly assign 2 to one cell
-	while(1):
-		if game_over:
-			print("GAME OVER!")
-			break
-		display_board()   #Displays current board state
-		global has_moved
-		has_moved = False     #Resets has_moved to false at beginning of each turn
-		user_input = int(input("Your next move: "))   #Takes users input
-		if user_input == -1:  #Pressing -1 finishes the game
-			break
-		if user_input not in valid_moves:    #If users move is not valid then ignores the move
-			print("Wrong Move!")
-			continue	
-		move(user_input)    #Performs the move
-		if has_moved:           #Only spawns new cells if board has changed
-			spawn_new_cell()
-		print(f"Current Score {current_score}")  #Prints the current score
-		print(f"Highest Score {highest_score}")  #Prints the current score
+
+def end_game():
+	'''Ends the game and saves the data'''
 	save_highest_score(highest_score)
 
 
-play_game()
+
+def next_turn(user_input):
+	'''The main game loop'''
+	global game_over
+	if game_over:
+		print("GAME OVER!")
+		end_game()
+		return	
+	#display_board()   #Displays current board state
+	global has_moved
+	has_moved = False     #Resets has_moved to false at beginning of each turn
+	#.user_input = int(input("Your next move: "))   #Takes users input
+	if user_input == -1:  #Pressing -1 finishes the game
+		end_game()
+		return
+	if user_input not in valid_moves:    #If users move is not valid then ignores the move
+		print("Wrong Move!")
+	move(user_input)    #Performs the move
+	if has_moved:           #Only spawns new cells if board has changed
+		spawn_new_cell()
+	global c
+	print(c,game_over,id(game_over))
+	c+=1
+	#print(f"Current Score {current_score}")  #Prints the current score
+	#print(f"Highest Score {highest_score}")  #Prints the current score
+
+
+#play_game()
