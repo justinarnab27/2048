@@ -159,11 +159,13 @@ def init_game():
 	'''Initializes the game'''
 	global game_over
 	game_over = False        #Sets the gameover variable to false
-	#print(id(game_over))
 	global current_score    
 	current_score = 0   #Sets the current_score to 0
 	global highest_score
 	highest_score = get_highest_score()
+	for i in range(board_size):
+		for j in range(board_size):
+			board[i][j] = 0
 	board[random.randrange(board_size)][random.randrange(board_size)] = 2   #randomly assign 2 to one cell
 
 def end_game():

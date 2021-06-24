@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import PhotoImage, messagebox
 import game
 
 #dict mapping cell values to background colors
@@ -27,7 +27,21 @@ def update_board():
 				board_var_list[i][j].configure(text='')
 			else:
 				board_var_list[i][j].configure(text=game.board[i][j])
-			
+
+def btn_start_new_game():
+	'''Activates on clicking new game button
+		Ends the current game and creates new game'''
+	game.end_game()
+	start_new_game()
+
+def btn_reset_score():
+	'''Activates on clicking reset score button
+		Resets the current score to 0'''
+	result = messagebox.askyesno("Warning!","Do you want to reset highest score to zero?") #Creates confirmation box
+	if result:  #sets highest score to zero and restarts game
+		game.highest_score = 0
+		game.save_highest_score(game.highest_score)
+		start_new_game()	
 
 window = tk.Tk()
 window.resizable(False,False)
@@ -61,11 +75,12 @@ label_highest_score = tk.Label(master=frame_side,textvariable=highest_score_var,
 label_highest_score.pack(padx=5)
 
 #Creates button for resetting the highest score to 0
-button_reset_score = tk.Button(master=frame_side,text="Reset Scores") #Button for creating a new game
+button_reset_score = tk.Button(master=frame_side,text="Reset Scores",command=btn_reset_score,bg='red',fg='white') #Button for creating a new game
+
 button_reset_score.pack(side=tk.BOTTOM,padx=5,pady=10)
 
 #Button for restarting the game
-button_new_game = tk.Button(master=frame_side,text="New Game") #Button for creating a new game
+button_new_game = tk.Button(master=frame_side,text="New Game",command=btn_start_new_game,bg='red',fg='white') #Button for creating a new game
 button_new_game.pack(side=tk.BOTTOM,padx=5,pady=10)
 
 def arrow_press(event):
@@ -74,8 +89,6 @@ def arrow_press(event):
 	if game.game_over:      #Pressing arrow doesn't do anything if game is over
 		return
 	global score
-	score_var.set(f"Your Score:\n{game.current_score}")  #Updates the score
-	highest_score_var.set(f"Highest Score:\n{game.highest_score}")   #Updates the highest score
 	#Dict mapping keys to user_inputs
 	dict = {                   
 		"Up" : 0,
@@ -85,6 +98,8 @@ def arrow_press(event):
 	}
 	game.next_turn(dict[event.keysym])   #Performs the next turn of the game
 	update_board()     #Updates the board
+	score_var.set(f"Your Score:\n{game.current_score}")  #Updates the score
+	highest_score_var.set(f"Highest Score:\n{game.highest_score}")   #Updates the highest score
 	if game.game_over:        #If game is over displays game over message
 		messagebox.showinfo("Game Over","Game Over!")
 
@@ -95,15 +110,19 @@ def on_closing():
 	game.end_game()   #Saves the highest score
 	return
 
+def start_new_game():
+	game.init_game()       #Initializes the game
+	score_var.set(f"Your Score:\n{game.current_score}")     #sets the score labels
+	highest_score_var.set(f"Highest Score:\n{game.highest_score}")
+	update_board()   #updates board
+
 #arrow_press is called if arrow keys are pressed
 window.bind("<Up>",arrow_press)
 window.bind("<Down>",arrow_press)
 window.bind("<Left>",arrow_press)
 window.bind("<Right>",arrow_press)
 
-game.init_game()       #Initializes the game
-score_var.set(f"Your Score:\n{game.current_score}")     #sets the score labels
-highest_score_var.set(f"Highest Score:\n{game.highest_score}")
-update_board()   #updates board
 window.protocol("WM_DELETE_WINDOW",on_closing)   #maps on_closing to closing window
+
+start_new_game()
 window.mainloop()    
