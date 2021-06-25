@@ -9,6 +9,10 @@ class game:
 	has_moved = False    #Indicates if the board has changed due to a move
 	valid_moves = range(4)  #List of valid moves
 
+	def change_board(new_board):
+		'''Changes the board to new board'''
+		board = new_board.deepcopy()
+
 	def is_game_on(self):
 		'''Returns true if at least one move is possible'''
 		flag = False
