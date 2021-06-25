@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import PhotoImage, messagebox
-import game
+from game import game
 
 #dict mapping cell values to background colors
 bg_color = {
@@ -13,25 +13,26 @@ bg_color = {
 	64 : '#66ffff'
 }
 
+new_game = game() 
 
 def update_board():
 	'''Updates the board'''
 	#iterates over whole board
-	for i in range(game.board_size):
-		for j in range(game.board_size):
+	for i in range(new_game.board_size):
+		for j in range(new_game.board_size):
 			color_background = '#cc66ff'  #Default Color
-			if game.board[i][j] in bg_color:
-				color_background = bg_color[game.board[i][j]]
+			if new_game.board[i][j] in bg_color:
+				color_background = bg_color[new_game.board[i][j]]
 			board_var_list[i][j].configure(background=color_background)
-			if game.board[i][j] == 0:
+			if new_game.board[i][j] == 0:
 				board_var_list[i][j].configure(text='')
 			else:
-				board_var_list[i][j].configure(text=game.board[i][j])
+				board_var_list[i][j].configure(text=new_game.board[i][j])
 
 def btn_start_new_game():
 	'''Activates on clicking new game button
 		Ends the current game and creates new game'''
-	game.end_game()
+	new_game.end_game()
 	start_new_game()
 
 def btn_reset_score():
@@ -39,8 +40,8 @@ def btn_reset_score():
 		Resets the current score to 0'''
 	result = messagebox.askyesno("Warning!","Do you want to reset highest score to zero?") #Creates confirmation box
 	if result:  #sets highest score to zero and restarts game
-		game.highest_score = 0
-		game.save_highest_score(game.highest_score)
+		new_game.highest_score = 0
+		new_game.save_highest_score(new_game.highest_score)
 		start_new_game()	
 
 window = tk.Tk()
@@ -54,9 +55,9 @@ frame_side.grid(row=0,column=1,sticky='nsew')
 
 #creates a 3x3 grid for the game
 board_var_list = []   #Stores all the cells
-for i in range(game.board_size):
+for i in range(new_game.board_size):
 	row = [] 
-	for j in range(game.board_size):
+	for j in range(new_game.board_size):
 		#Creates the cells
 		box = tk.Label(master=frame_grid,width=4,height=2,borderwidth=3,relief=tk.RIDGE,font=("Arial",35))
 		row.append(box)
@@ -86,9 +87,8 @@ button_new_game.pack(side=tk.BOTTOM,padx=5,pady=10)
 def arrow_press(event):
 	'''The functions is activated is an arrow keys is pressed
 		and then updates the board'''
-	if game.game_over:      #Pressing arrow doesn't do anything if game is over
+	if new_game.game_over:      #Pressing arrow doesn't do anything if game is over
 		return
-	global score
 	#Dict mapping keys to user_inputs
 	dict = {                   
 		"Up" : 0,
@@ -96,24 +96,25 @@ def arrow_press(event):
 		"Down" : 2,
 		"Left" : 3
 	}
-	game.next_turn(dict[event.keysym])   #Performs the next turn of the game
+	new_game.next_turn(dict[event.keysym])   #Performs the next turn of the game
 	update_board()     #Updates the board
-	score_var.set(f"Your Score:\n{game.current_score}")  #Updates the score
-	highest_score_var.set(f"Highest Score:\n{game.highest_score}")   #Updates the highest score
-	if game.game_over:        #If game is over displays game over message
+	score_var.set(f"Your Score:\n{new_game.current_score}")  #Updates the score
+	highest_score_var.set(f"Highest Score:\n{new_game.highest_score}")   #Updates the highest score
+	if new_game.game_over:        #If game is over displays game over message
 		messagebox.showinfo("Game Over","Game Over!")
 
 def on_closing():
 	'''Activates when window is closed, saves the score and asks for confirmation'''
 	if messagebox.askokcancel("Quit", "Do you want to quit?"):  #Exit confirmation
 		window.destroy()
-	game.end_game()   #Saves the highest score
+	new_game.end_game()   #Saves the highest score
 	return
 
 def start_new_game():
-	game.init_game()       #Initializes the game
-	score_var.set(f"Your Score:\n{game.current_score}")     #sets the score labels
-	highest_score_var.set(f"Highest Score:\n{game.highest_score}")
+	global new_game
+	new_game =	game() 
+	score_var.set(f"Your Score:\n{new_game.current_score}")     #sets the score labels
+	highest_score_var.set(f"Highest Score:\n{new_game.highest_score}")
 	update_board()   #updates board
 
 #arrow_press is called if arrow keys are pressed
