@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import PhotoImage, messagebox
 from game import game
+import mcts 
+import copy
+import random
 
 #dict mapping cell values to background colors
 bg_color = {
@@ -44,6 +47,26 @@ def btn_reset_score():
 		new_game.save_highest_score(new_game.highest_score)
 		start_new_game()	
 
+def AI_move():
+	'''Performs the AI's next move and updates the board'''
+	board = copy.deepcopy(new_game.board)
+	user_input = mcts.decide_next_move(board,new_game.current_score) 
+	new_game.next_turn(user_input)          #Plays the game with AI move
+	new_game.display_board()
+	update_board()            #Updates board
+	score_var.set(f"Your Score:\n{new_game.current_score}")  #Updates the score
+	highest_score_var.set(f"Highest Score:\n{new_game.highest_score}")   #Updates the highest score
+	if new_game.game_over:        #If game is over displays game over message
+		messagebox.showinfo("Game Over","Game Over!")
+	else:
+		window.after(100,AI_move)    #If game is not over calls itself again
+
+
+def start_AI():
+	'''Activates when AI button is pressed, starts game and lets AI play it'''
+	start_new_game()
+	window.after(100,AI_move)
+
 window = tk.Tk()
 window.resizable(False,False)
 
@@ -80,6 +103,10 @@ button_reset_score = tk.Button(master=frame_side,text="Reset Scores",command=btn
 
 button_reset_score.pack(side=tk.BOTTOM,padx=5,pady=10)
 
+#Creates button for playing AI game
+button_ai_game = tk.Button(master=frame_side,text="AI Game",command=start_AI,bg='red',fg='white') #Button for creating a new game
+button_ai_game.pack(side=tk.BOTTOM,padx=5,pady=10)
+
 #Button for restarting the game
 button_new_game = tk.Button(master=frame_side,text="New Game",command=btn_start_new_game,bg='red',fg='white') #Button for creating a new game
 button_new_game.pack(side=tk.BOTTOM,padx=5,pady=10)
@@ -111,6 +138,7 @@ def on_closing():
 	return
 
 def start_new_game():
+	'''Starts a new game'''
 	global new_game
 	new_game =	game() 
 	score_var.set(f"Your Score:\n{new_game.current_score}")     #sets the score labels

@@ -1,17 +1,25 @@
 import random
+import copy
 
 class game:
-	board = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]   #The game board
 	board_size = 4	#Size of the board i.e. numbers of rows and columns
-	current_score = 0  #Current score of the user
-	highest_score = 0  #Highest Score of the user
-	game_over = False   #Variable to indicate whether gane is over
-	has_moved = False    #Indicates if the board has changed due to a move
 	valid_moves = range(4)  #List of valid moves
 
-	def change_board(new_board):
+	def change_board(self,new_board):
 		'''Changes the board to new board'''
-		board = new_board.deepcopy()
+		self.board = copy.deepcopy(new_board)
+
+	def change_score(self,new_score):
+		'''Changes the score to new_score'''
+		self.score = new_score
+
+	def check_possible_moves(self):
+		'''Returns a list of possible moves'''
+		arr = []    #Array containing possible moves
+		for i in range(4):
+			if self.move(i,True):
+				arr.append(i)
+		return arr 
 
 	def is_game_on(self):
 		'''Returns true if at least one move is possible'''
@@ -138,10 +146,12 @@ class game:
 
 	def display_board(self):
 		'''Displats the board'''
+		print()
 		for i in self.board:
 			for j in i:
 				print(j,end=' ')
 			print()
+		print()
 
 	def get_highest_score(self):
 		'''Gets the highest score from the highest_score.txt file'''
@@ -159,6 +169,10 @@ class game:
 
 	def __init__(self):
 		'''Initializes the game'''
+		self.board = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]   #The game board
+		self.current_score = 0  #Current score of the user
+		self.highest_score = 0  #Highest Score of the user
+		self.has_moved = False    #Indicates if the board has changed due to a move
 		self.game_over = False        #Sets the gameover variable to false
 		self.current_score = 0   #Sets the current_score to 0
 		self.highest_score = self.get_highest_score()
