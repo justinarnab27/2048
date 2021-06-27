@@ -7,7 +7,13 @@ The game allows for both play by human and auto-play using the AI.
 
 
 
-##REFERENCES:
+
+<img src="game_img/img2.png" width="900" height="500">
+<img src="game_img/img1.png" width="900" height="500">
+
+
+
+## REFERENCES:
 - [2048 Game](https://play2048.co/)
 - [MCTS Algorithm](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search)
 
